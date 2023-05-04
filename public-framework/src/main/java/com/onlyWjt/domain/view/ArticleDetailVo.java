@@ -35,7 +35,7 @@ public class ArticleDetailVo {
     private Long viewCount;
 
     private Date createTime;
-    private Date content;
+    private String content;
 }
 
 
