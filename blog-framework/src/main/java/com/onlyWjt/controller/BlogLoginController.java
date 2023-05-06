@@ -1,4 +1,4 @@
-package com.onlyWjt.Controller;
+package com.onlyWjt.controller;
 
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.User;
@@ -19,9 +19,13 @@ public class BlogLoginController {
 
     @PostMapping("/login")
     public ResponseResult login(@RequestBody User user){
-        if(StringUtils.hasText(user.getUserName())){
+        if(!StringUtils.hasText(user.getUserName())){
             throw new SystemException(AppHttpCodeEnum.REQUIRE_USERNAME);
         }
         return blogLoginService.login(user);
+    }
+    @PostMapping("/logout")
+    public ResponseResult logout(){
+        return blogLoginService.logout();
     }
 }

@@ -1,0 +1,7 @@
+com\onlyWjt\controller\BlogLoginController.class
+com\onlyWjt\controller\ArticleController.class
+com\onlyWjt\controller\CommentController.class
+com\onlyWjt\config\SecurityConfig.class
+com\onlyWjt\BlogApplication.class
+com\onlyWjt\controller\CategoryController.class
+com\onlyWjt\controller\LinkController.class

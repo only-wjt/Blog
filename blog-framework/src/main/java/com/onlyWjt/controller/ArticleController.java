@@ -1,4 +1,4 @@
-package com.onlyWjt.Controller;
+package com.onlyWjt.controller;
 
 import com.onlyWjt.domain.entity.Article;
 import com.onlyWjt.domain.entity.ResponseResult;
