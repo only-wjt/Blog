@@ -1,6 +1,7 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.User;
 
 
@@ -11,5 +12,7 @@ import com.onlyWjt.domain.entity.User;
  * @since 2023-05-06 16:55:42
  */
 public interface UserService extends IService<User> {
+    ResponseResult userInfo();
 
+    ResponseResult updateUserInfo(User user);
 }
