@@ -235,4 +235,11 @@ public class RedisCache
     {
         return redisTemplate.keys(pattern);
     }
+
+    /**
+     * 可以对hash值中的value值进行操作
+     */
+    public void incrementCacheMapValue(String key, String hKey,int v){
+        redisTemplate.opsForHash().increment(key,hKey,v);
+    }
 }

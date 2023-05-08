@@ -16,6 +16,7 @@ import com.onlyWjt.mapper.CategoryMapper;
 import com.onlyWjt.service.ArticleService;
 import com.onlyWjt.service.CategoryService;
 import com.onlyWjt.utils.BeanCopyUtils;
+import com.onlyWjt.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @Override
     public ResponseResult hotArticleList() {
@@ -74,7 +78,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ResponseResult getArticleDetail(Long id) {
         //根据id查询文章
+        //V1版本的，从数据库里面读取
+//        Article article = getById(id);
+//        //转换成VO
+//        ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
+//        //根据分类id查询分类名
+//        Long categoryId = articleDetailVo.getCategoryId();
+//        Category category = categoryService.getById(categoryId);
+//        if(category!=null){
+//            articleDetailVo.setCategoryName(category.getName());
+//        }
         Article article = getById(id);
+        //从redis中获取viewCount
+        Integer viewCount = redisCache.getCacheMapValue("article:viewCount", id.toString());
+        article.setViewCount(viewCount.longValue());
         //转换成VO
         ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
         //根据分类id查询分类名
@@ -85,5 +102,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         //封装响应返回
         return ResponseResult.okResult(articleDetailVo);
+    }
+
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        //更新redis对应id的浏览量
+        redisCache.incrementCacheMapValue("Article:viewCount",id.toString(),1);
+        return ResponseResult.okResult();
     }
 }
