@@ -1,6 +1,7 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddCommentDto;
 import com.onlyWjt.domain.entity.Comment;
 import com.onlyWjt.domain.entity.ResponseResult;
 
@@ -13,7 +14,7 @@ import com.onlyWjt.domain.entity.ResponseResult;
  */
 public interface CommentService extends IService<Comment> {
 
-    ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize);
+    ResponseResult commentList(String commentType, Long articleId, Integer pageNum, Integer pageSize);
 
     ResponseResult addComment(Comment comment);
 }
