@@ -1,9 +1,11 @@
 package com.onlyWjt.controller;
 
 import com.onlyWjt.domain.entity.LoginUser;
+import com.onlyWjt.domain.entity.Menu;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.User;
 import com.onlyWjt.domain.view.AdminUserInfoVo;
+import com.onlyWjt.domain.view.RouterVo;
 import com.onlyWjt.domain.view.UserInfoVo;
 import com.onlyWjt.enums.AppHttpCodeEnum;
 import com.onlyWjt.exception.SystemException;
@@ -54,6 +56,19 @@ public class LoginController {
         //封装数据返回
         AdminUserInfoVo adminUserInfoVo = new AdminUserInfoVo(perms,roleKeyList,userInfoVo);
         return ResponseResult.okResult(adminUserInfoVo);
+    }
+    @GetMapping("/getRouters")
+    public ResponseResult<RouterVo> getRoutes(){
+        //查询menus，结果是嵌套tree的形式
+        Long userId = SecurityUtils.getUserId();
+        //根据用户id查询权限信息
+        List<Menu> menus = menuService.selectRouterMenuTreeByUserId(userId);
+        //封装数据返回
+        return ResponseResult.okResult(new RouterVo(menus));
+    }
+    @PostMapping("/user/logout")
+    public ResponseResult logout(){
+        return loginService.logout();
     }
 
 }

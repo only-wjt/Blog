@@ -9,6 +9,7 @@ import com.onlyWjt.mapper.RoleMapper;
 import com.onlyWjt.service.RoleService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,8 +21,19 @@ import java.util.List;
 @Service("roleService")
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
+
+
     @Override
     public List<String> selectRoleByUserId(Long userId) {
-       return null;
+        //判断是否为管理员
+
+        //如果是管理员，返回集合中，只需要传admin
+        if(userId == 1L){
+            ArrayList<String> strings = new ArrayList<>();
+            strings.add("amdin");
+            return strings;
+        }
+        //如果不是，则查询用户所有的角色信息
+       return getBaseMapper().selectRoleKeyByUserId(userId);
     }
 }

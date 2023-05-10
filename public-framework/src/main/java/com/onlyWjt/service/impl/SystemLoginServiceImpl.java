@@ -10,6 +10,7 @@ import com.onlyWjt.service.LoginService;
 import com.onlyWjt.utils.BeanCopyUtils;
 import com.onlyWjt.utils.JwtUtil;
 import com.onlyWjt.utils.RedisCache;
+import com.onlyWjt.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,5 +50,14 @@ public class SystemLoginServiceImpl implements LoginService {
         Map<String,String> map = new HashMap<>();
         map.put("token",jwt);
         return ResponseResult.okResult(map);
+    }
+
+    @Override
+    public ResponseResult logout() {
+        //获取用户id
+        Long userId = SecurityUtils.getUserId();
+        //删除redisCache
+        redisCache.deleteObject("login:"+userId);
+        return ResponseResult.okResult();
     }
 }

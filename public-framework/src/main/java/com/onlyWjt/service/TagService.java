@@ -1,7 +1,10 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.TagListDto;
+import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.Tag;
+import com.onlyWjt.domain.view.PageVo;
 
 
 /**
@@ -12,4 +15,5 @@ import com.onlyWjt.domain.entity.Tag;
  */
 public interface TagService extends IService<Tag> {
 
+    ResponseResult<PageVo> pageTagList(Integer pageNum, Integer pageSize, TagListDto tagListDto);
 }
