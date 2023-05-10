@@ -16,4 +16,8 @@ import com.onlyWjt.domain.view.PageVo;
 public interface TagService extends IService<Tag> {
 
     ResponseResult<PageVo> pageTagList(Integer pageNum, Integer pageSize, TagListDto tagListDto);
+
+    ResponseResult addTag(Tag tag);
+
+    ResponseResult deleteTagById(String tagId);
 }
