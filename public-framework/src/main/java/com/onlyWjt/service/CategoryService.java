@@ -3,6 +3,9 @@ package com.onlyWjt.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.onlyWjt.domain.entity.Category;
 import com.onlyWjt.domain.entity.ResponseResult;
+import com.onlyWjt.domain.view.CategoryVo;
+
+import java.util.List;
 
 
 /**
@@ -14,4 +17,6 @@ import com.onlyWjt.domain.entity.ResponseResult;
 public interface CategoryService extends IService<Category> {
 
     ResponseResult getCategoryList();
+
+    List<CategoryVo> getAllCategory();
 }

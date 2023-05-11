@@ -11,6 +11,7 @@ import com.onlyWjt.mapper.CategoryMapper;
 import com.onlyWjt.service.ArticleService;
 import com.onlyWjt.service.CategoryService;
 import com.onlyWjt.utils.BeanCopyUtils;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +49,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         List<CategoryVo> categoryVos = BeanCopyUtils.copyBeanList(categories, CategoryVo.class);
 
         return ResponseResult.okResult(categoryVos);
+    }
+
+    @Override
+    public List<CategoryVo>  getAllCategory() {
+        //获取所有的已经发布的cate
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Category::getStatus, SystemConstants.CATE_STAtUS_NORMAL);
+        List<Category> list = list(wrapper);
+        //将查询的数据，封装成vo返回出去
+        return  BeanCopyUtils.copyBeanList(list, CategoryVo.class);
     }
 }

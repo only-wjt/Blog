@@ -1,10 +1,14 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddTagDto;
 import com.onlyWjt.domain.dto.TagListDto;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.Tag;
 import com.onlyWjt.domain.view.PageVo;
+import com.onlyWjt.domain.view.TagVo;
+
+import java.util.List;
 
 
 /**
@@ -20,4 +24,10 @@ public interface TagService extends IService<Tag> {
     ResponseResult addTag(Tag tag);
 
     ResponseResult deleteTagById(String tagId);
+
+    ResponseResult getTagById(Long tagId);
+
+    ResponseResult updateTagById(AddTagDto tag);
+
+    List<TagVo> getAllTag();
 }

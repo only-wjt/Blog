@@ -1,6 +1,7 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddArticleDto;
 import com.onlyWjt.domain.entity.Article;
 import com.onlyWjt.domain.entity.ResponseResult;
 
@@ -11,4 +12,6 @@ public interface ArticleService extends IService<Article> {
     ResponseResult getArticleDetail(Long id);
 
     ResponseResult updateViewCount(Long id);
+
+    ResponseResult add(AddArticleDto article);
 }
