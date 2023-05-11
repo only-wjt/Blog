@@ -1,8 +1,10 @@
 package com.onlyWjt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.onlyWjt.constants.SystemConstants;
 import com.onlyWjt.domain.entity.LoginUser;
 import com.onlyWjt.domain.entity.User;
+import com.onlyWjt.mapper.MenuMapper;
 import com.onlyWjt.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,12 +13,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service("blogLoginService")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private MenuMapper menuMapper;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //根据用户名查询用户信息
@@ -27,7 +32,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(Objects.isNull(user)){
             throw new RuntimeException("用户不存在");
         }
-        //TODO 查询权限信息封装
-        return new LoginUser(user);
+        //如果是后台用户，才需要查询权限封装
+        if(user.getType().equals(SystemConstants.ADMIN)){
+            List<String> permList = menuMapper.selectPermByUserId(user.getId());
+            return new LoginUser(user,permList);
+        }
+        return new LoginUser(user,null);
     }
 }
