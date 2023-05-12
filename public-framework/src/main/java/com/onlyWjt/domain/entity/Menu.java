@@ -27,6 +27,7 @@ import lombok.experimental.Accessors;
 @TableName("sys_menu")
 public class Menu  {
     //菜单ID@TableId
+    @TableId
     private Long id;
 
     //菜单名称

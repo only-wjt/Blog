@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @NoArgsConstructor
 @TableName("sys_role")
 public class Role  {
-    //角色ID@TableId
+    //角色ID
+    @TableId
     private Long id;
-
     //角色名称
     private String roleName;
     //角色权限字符串

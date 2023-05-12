@@ -1,6 +1,7 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.Role;
 
 import java.util.List;
@@ -15,4 +16,6 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
 
     List<String> selectRoleByUserId(Long userId);
+
+    ResponseResult getRoleAllList(Integer pageNum, Integer pageSize, String roleName, String status);
 }

@@ -9,20 +9,19 @@ import com.onlyWjt.domain.entity.Article;
 import com.onlyWjt.domain.entity.ArticleTag;
 import com.onlyWjt.domain.entity.Category;
 import com.onlyWjt.domain.entity.ResponseResult;
-import com.onlyWjt.domain.view.ArticleDetailVo;
-import com.onlyWjt.domain.view.ArticleListVo;
-import com.onlyWjt.domain.view.HotArticleVo;
-import com.onlyWjt.domain.view.PageVo;
+import com.onlyWjt.domain.view.*;
 import com.onlyWjt.mapper.ArticleMapper;
 import com.onlyWjt.mapper.CategoryMapper;
 import com.onlyWjt.service.ArticleService;
 import com.onlyWjt.service.ArticleTagService;
 import com.onlyWjt.service.CategoryService;
+import com.onlyWjt.service.TagService;
 import com.onlyWjt.utils.BeanCopyUtils;
 import com.onlyWjt.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +36,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private RedisCache redisCache;
     @Autowired
     private ArticleTagService articleTagService;
+    @Autowired
+    private ArticleService articleService;
+    @Autowired
+    private ArticleMapper articleMapper;
 
     @Override
     public ResponseResult hotArticleList() {
@@ -129,6 +132,58 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .map(dto -> new ArticleTag(article.getId(), dto))
                 .collect(Collectors.toList());
         articleTagService.saveBatch(collect);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult queryArticleByTitleAndSummary(Integer pageNum, Integer pageSize, String title, String summary) {
+        LambdaQueryWrapper<Article> articleWarpper = new LambdaQueryWrapper<>();
+        articleWarpper.like(StringUtils.hasText(title), Article::getTitle, title);
+        articleWarpper.like(StringUtils.hasText(summary), Article::getSummary, summary);
+        Page<Article> articlePage = new Page<>(pageNum, pageSize);
+        page(articlePage,articleWarpper);
+        List<Article> records = articlePage.getRecords();
+        PageVo pageVo = new PageVo(records, articlePage.getTotal());
+        return ResponseResult.okResult(pageVo);
+    }
+
+    @Override
+    public ResponseResult getArticleById(Long id) {
+        //根据id获取文章内容
+        Article article = articleService.getById(id);
+        ArticleVo articleVo = BeanCopyUtils.copyBean(article, ArticleVo.class);
+        //获取到文章之后，使用文章id获取tag数组
+        LambdaQueryWrapper<ArticleTag> articleTagWrapper = new LambdaQueryWrapper<>();
+        articleTagWrapper.eq(ArticleTag::getArticleId,id);
+        List<ArticleTag> list = articleTagService.list(articleTagWrapper);
+        List<Long> tags = list.stream()
+                .map(tag -> tag.getTagId())
+                .collect(Collectors.toList());
+        articleVo.setTags(tags);
+        return ResponseResult.okResult(articleVo);
+    }
+
+    @Override
+    @Transactional
+    public ResponseResult updateArticle(AddArticleDto articleDto) {
+        //先更新文章
+        Article article = BeanCopyUtils.copyBean(articleDto, Article.class);
+        save(article);
+        //在更新tags，tag先删除，后新增
+        List<Long> tags = articleDto.getTags();
+        LambdaQueryWrapper<ArticleTag> articleTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleTagLambdaQueryWrapper.eq(ArticleTag::getArticleId, articleDto.getId());
+        articleTagService.remove(articleTagLambdaQueryWrapper);
+        List<ArticleTag> collect = articleDto.getTags().stream()
+                .map(dto -> new ArticleTag(article.getId(), dto))
+                .collect(Collectors.toList());
+        articleTagService.saveBatch(collect);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteArticleById(Long id) {
+        articleMapper.deleteById(id);
         return ResponseResult.okResult();
     }
 }
