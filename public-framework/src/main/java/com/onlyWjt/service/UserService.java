@@ -1,6 +1,8 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddUserDto;
+import com.onlyWjt.domain.dto.ChangeUserDto;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.User;
 
@@ -17,4 +19,10 @@ public interface UserService extends IService<User> {
     ResponseResult updateUserInfo(User user);
 
     ResponseResult register(User user);
+
+    ResponseResult getAllUserList(Integer pageNum, Integer pageSize, String userName, String phonenumber, String status);
+
+    ResponseResult changeUserStatus(ChangeUserDto userDto);
+
+    ResponseResult addUser(AddUserDto userDto);
 }

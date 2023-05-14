@@ -124,4 +124,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
         return ResponseResult.okResult();
     }
+
+    @Override
+    public ResponseResult getRoleAllList() {
+        LambdaQueryWrapper<Role> roleWrapper = new LambdaQueryWrapper<>();
+        roleWrapper.eq(Role::getStatus, SystemConstants.STATUS_NORMAL);
+        List<Role> list = list(roleWrapper);
+        return ResponseResult.okResult(list);
+    }
 }

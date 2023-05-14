@@ -2,9 +2,13 @@ package com.onlyWjt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.onlyWjt.domain.dto.AddUserDto;
+import com.onlyWjt.domain.dto.ChangeUserDto;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.User;
+import com.onlyWjt.domain.view.PageVo;
 import com.onlyWjt.domain.view.UserInfoVo;
 import com.onlyWjt.enums.AppHttpCodeEnum;
 import com.onlyWjt.exception.SystemException;
@@ -16,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * 用户表(User)表服务实现类
@@ -75,6 +81,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //存入数据库
         save(user);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getAllUserList(Integer pageNum, Integer pageSize, String userName, String phonenumber, String status) {
+        LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
+        userWrapper.eq(StringUtils.hasText(status),User::getStatus, status);
+        userWrapper.like(StringUtils.hasText(userName),User::getUserName, userName);
+        userWrapper.like(StringUtils.hasText(phonenumber),User::getPhonenumber, phonenumber);
+
+        Page<User> userPage = new Page<>(pageNum, pageSize);
+        page(userPage, userWrapper);
+        List<User> records = userPage.getRecords();
+        long total = userPage.getTotal();
+        return ResponseResult.okResult(new PageVo(records,total));
+    }
+
+    @Override
+    public ResponseResult changeUserStatus(ChangeUserDto userDto) {
+        User user = BeanCopyUtils.copyBean(userDto, User.class);
+        user.setId(userDto.getUserId());
+        updateById(user);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult addUser(AddUserDto userDto) {
+        if(StringUtils.hasText(userDto.getUserName())){
+            throw new SystemException(AppHttpCodeEnum.USERNAME_NOT_NULL);
+        }
+        return null;
     }
 
     private boolean nickNameExist(String nickName) {

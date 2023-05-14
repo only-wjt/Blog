@@ -39,4 +39,9 @@ public class RoleController {
     public ResponseResult updateRole(@RequestBody AddRoleDto roleDto){
         return roleService.updateRole(roleDto);
     }
+
+    @GetMapping("/listAllRole")
+    public ResponseResult getRoleAllList(){
+        return roleService.getRoleAllList();
+    }
 }
