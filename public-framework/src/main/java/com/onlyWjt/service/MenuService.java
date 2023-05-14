@@ -23,9 +23,13 @@ public interface MenuService extends IService<Menu> {
 
     ResponseResult addMenu(Menu menu);
 
-    ResponseResult getMenuById(String id);
+    ResponseResult getMenuById(Long id);
 
     ResponseResult updateMenu(Menu menu);
 
     ResponseResult deleteMenuById(Long menuId);
+
+    ResponseResult getTreeList();
+
+    ResponseResult getRoleMenuTreeById(Long id);
 }

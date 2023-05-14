@@ -1,6 +1,8 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddRoleDto;
+import com.onlyWjt.domain.dto.RoleDto;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.entity.Role;
 
@@ -18,4 +20,14 @@ public interface RoleService extends IService<Role> {
     List<String> selectRoleByUserId(Long userId);
 
     ResponseResult getRoleAllList(Integer pageNum, Integer pageSize, String roleName, String status);
+
+    ResponseResult changeRoleStatus(RoleDto role);
+
+    ResponseResult addRole(AddRoleDto roleDto);
+
+    ResponseResult getRoleById(Long id);
+
+    ResponseResult deleteRoleById(Long id);
+
+    ResponseResult updateRole(AddRoleDto roleDto);
 }

@@ -22,7 +22,7 @@ public class MenuController {
         return menuService.addMenu(menu);
     }
     @GetMapping("{id}")
-    public ResponseResult getMenuById(@PathVariable("id") String id){
+    public ResponseResult getMenuById(@PathVariable("id") Long id){
         return menuService.getMenuById(id);
     }
 
@@ -33,5 +33,13 @@ public class MenuController {
     @DeleteMapping("{menuId}")
     public ResponseResult deleteMenuById(@PathVariable("menuId") Long menuId){
         return menuService.deleteMenuById(menuId);
+    }
+    @GetMapping("/treeselect")
+    public ResponseResult getTreeList(){
+        return menuService.getTreeList();
+    }
+    @GetMapping("/roleMenuTreeselect/{id}")
+    public ResponseResult getRoleMenuTreeById(@PathVariable("id") Long id){
+        return menuService.getRoleMenuTreeById(id);
     }
 }

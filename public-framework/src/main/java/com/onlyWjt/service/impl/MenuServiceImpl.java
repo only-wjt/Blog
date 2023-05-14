@@ -1,17 +1,18 @@
 package com.onlyWjt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.onlyWjt.constants.SystemConstants;
 import com.onlyWjt.domain.entity.Menu;
 import com.onlyWjt.domain.entity.ResponseResult;
+import com.onlyWjt.domain.entity.RoleMenu;
+import com.onlyWjt.domain.view.MenuAuthVo;
 import com.onlyWjt.domain.view.MenuVo;
+import com.onlyWjt.domain.view.RoleMenuVo;
 import com.onlyWjt.enums.AppHttpCodeEnum;
-import com.onlyWjt.exception.SystemException;
 import com.onlyWjt.mapper.MenuMapper;
-import com.onlyWjt.service.ArticleService;
 import com.onlyWjt.service.MenuService;
+import com.onlyWjt.service.RoleMenuService;
 import com.onlyWjt.utils.BeanCopyUtils;
 import com.onlyWjt.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
  */
 @Service("menuService")
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+    @Autowired
+    private RoleMenuService roleMenuService;
 
     @Override
     public List<String> selectPermByUserId(Long userId) {
@@ -83,7 +86,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
-    public ResponseResult getMenuById(String id) {
+    public ResponseResult getMenuById(Long id) {
         Menu byId = getById(id);
         MenuVo menuVo = BeanCopyUtils.copyBean(byId, MenuVo.class);
         return ResponseResult.okResult(menuVo);
@@ -111,6 +114,48 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         return ResponseResult.okResult();
     }
 
+    @Override
+    public ResponseResult getTreeList() {
+        MenuMapper baseMapper = getBaseMapper();
+        List<Menu> allMenus = baseMapper.selectAllRouterMenu();
+        //将数据转换成需要的格式
+        List<MenuAuthVo> collect = allMenus.stream()
+                .map(menu -> new MenuAuthVo(menu.getId(), menu.getMenuName(), menu.getParentId(), menu.getOrderNum(), menu.getPath(), menu.getMenuName(), null))
+                .collect(Collectors.toList());
+        //构建tree
+        List<MenuAuthVo> menuTree = builderMenuAuthTree(collect,0L);
+        return ResponseResult.okResult(menuTree);
+    }
+
+    @Override
+    public ResponseResult getRoleMenuTreeById(Long id) {
+        // TODO 待优化
+        //现获取所有的权限，然后转成想要的对象
+//        MenuMapper baseMapper = getBaseMapper();
+        List<Menu> allMenus = baseMapper.selectAllRouterMenu();
+        //查询所有的数据
+        List<MenuAuthVo> menuAuthVos = allMenus.stream()
+                .map(menu -> new MenuAuthVo(menu.getId(), menu.getMenuName(), menu.getParentId(), menu.getOrderNum(), menu.getPath(), menu.getMenuName(), null))
+                .collect(Collectors.toList());
+        List<MenuAuthVo> menuKeys = baseMapper.selectAllMenuByRoleId(id);
+        if(String.valueOf(id).equals(SystemConstants.ADMIN)){
+            menuKeys = menuAuthVos;
+        }
+        List<Long> checkedKeys = menuKeys.stream()
+                .map(menuAuthVo -> menuAuthVo.getId())
+                .collect(Collectors.toList());
+        List<MenuAuthVo> levelMenu = builderMenuAuthTree(menuAuthVos, 0L);
+        RoleMenuVo roleMenuVo = new RoleMenuVo(levelMenu, checkedKeys);
+        return ResponseResult.okResult(roleMenuVo);
+    }
+
+    private List<MenuAuthVo> builderMenuAuthTree(List<MenuAuthVo> menuAuths, Long parentId) {
+        List<MenuAuthVo> menuTree = menuAuths.stream()
+                .filter(menuAuthVo -> menuAuthVo.getParentId().equals(parentId))
+                .map(menuAuthVo -> menuAuthVo.setChildren(getAuthChildren(menuAuthVo, menuAuths)))
+                .collect(Collectors.toList());
+        return menuTree;
+    }
     private List<Menu> builderMenuTree(List<Menu> menus, Long parentId) {
         List<Menu> menuTree = menus.stream()
                 .filter(menu -> menu.getParentId().equals(parentId))
@@ -129,6 +174,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         List<Menu> childrenList = menus.stream()
                 .filter(m -> m.getParentId().equals(menu.getId()))
                 .map(m->m.setChildren(getChildren(m,menus)))
+                .collect(Collectors.toList());
+        return childrenList;
+    }
+    private List<MenuAuthVo> getAuthChildren(MenuAuthVo menu, List<MenuAuthVo> menus) {
+        List<MenuAuthVo> childrenList = menus.stream()
+                .filter(m -> m.getParentId().equals(menu.getId()))
+                .map(m->m.setChildren(getAuthChildren(m,menus)))
                 .collect(Collectors.toList());
         return childrenList;
     }

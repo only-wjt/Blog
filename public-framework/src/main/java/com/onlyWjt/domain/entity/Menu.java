@@ -68,6 +68,4 @@ public class Menu  {
     @TableField(exist = false)
     private List<Menu> children;
 
-
-
 }

@@ -2,6 +2,7 @@ package com.onlyWjt.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.onlyWjt.domain.entity.Menu;
+import com.onlyWjt.domain.view.MenuAuthVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface MenuMapper extends BaseMapper<Menu> {
     List<Menu> selectAllRouterMenu();
 
     List<Menu> selectRouterTreeMenuByUserId(Long userId);
+
+    List<MenuAuthVo> selectAllMenuByRoleId(Long roleId);
 }
