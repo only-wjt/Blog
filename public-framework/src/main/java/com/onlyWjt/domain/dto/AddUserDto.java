@@ -29,5 +29,5 @@ public class AddUserDto {
     private String phonenumber;
     //用户性别（0男，1女，2未知）
     private String sex;
-    private List<String> roleIds;
+    private List<Long> roleIds;
 }

@@ -2,7 +2,10 @@ package com.onlyWjt.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.onlyWjt.domain.entity.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 
 /**
@@ -13,5 +16,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserMapper extends BaseMapper<User> {
+    boolean insertUserRole(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
 
+    List<Long> getRoleIdsByUserId(Long userId);
+
+    void deleteRoleByUserId(Long id);
 }

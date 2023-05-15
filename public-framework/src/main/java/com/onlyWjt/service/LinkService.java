@@ -1,6 +1,9 @@
 package com.onlyWjt.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlyWjt.domain.dto.AddLinkDto;
+import com.onlyWjt.domain.dto.LinkStatusDto;
+import com.onlyWjt.domain.dto.UpdateLinkDto;
 import com.onlyWjt.domain.entity.Link;
 import com.onlyWjt.domain.entity.ResponseResult;
 
@@ -13,4 +16,16 @@ import com.onlyWjt.domain.entity.ResponseResult;
  */
 public interface LinkService extends IService<Link> {
     ResponseResult getAllLink();
+
+    ResponseResult getLinkList(Integer pageNum, Integer pageSize, String name, String status);
+
+    ResponseResult saveLink(AddLinkDto linkDto);
+
+    ResponseResult getLinkById(Long id);
+
+    ResponseResult updateLink(UpdateLinkDto linkDto);
+
+    ResponseResult deleteLinkById(Long id);
+
+    ResponseResult changeLinkStatus(LinkStatusDto statusDto);
 }

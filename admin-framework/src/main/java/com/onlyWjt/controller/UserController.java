@@ -25,4 +25,18 @@ public class UserController {
     public ResponseResult addUser(@RequestBody AddUserDto userDto){
         return userService.addUser(userDto);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseResult deleteUserById(@PathVariable("id") Long id){
+        return userService.deleteUserById(id);
+    }
+    @GetMapping("{id}")
+    public ResponseResult getUserById(@PathVariable("id") Long id){
+        return userService.getUserByUser(id);
+    }
+    @PutMapping
+    public ResponseResult updateUser(@RequestBody AddUserDto userDto){
+        return userService.updateUser(userDto);
+    }
+
 }

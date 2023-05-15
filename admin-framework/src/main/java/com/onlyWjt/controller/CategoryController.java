@@ -3,6 +3,8 @@ package com.onlyWjt.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.MapUtils;
 import com.alibaba.fastjson.JSON;
+import com.onlyWjt.domain.dto.AddCategoryDto;
+import com.onlyWjt.domain.dto.CategoryDto;
 import com.onlyWjt.domain.dto.TagListDto;
 import com.onlyWjt.domain.entity.Category;
 import com.onlyWjt.domain.entity.ResponseResult;
@@ -15,9 +17,7 @@ import com.onlyWjt.utils.BeanCopyUtils;
 import com.onlyWjt.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -56,5 +56,28 @@ public class CategoryController {
             WebUtils.renderString(httpServletResponse, JSON.toJSONString(result));
 //            throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/list")
+    public ResponseResult getCateGoryList(Integer pageNum, Integer pageSize, String name, String status){
+        return categoryService.getCateGoryList(pageNum, pageSize, name, status);
+    }
+
+    @PostMapping
+    public ResponseResult addCategory(@RequestBody CategoryDto categoryDto){
+        return categoryService.addCategory(categoryDto);
+    }
+
+    @PutMapping
+    public ResponseResult updateCategory(@RequestBody AddCategoryDto addCategoryDto){
+        return categoryService.updateCategory(addCategoryDto);
+    }
+    @GetMapping("{id}")
+    public ResponseResult getCategoryById(@PathVariable("id") Long id){
+        return categoryService.getCategoryById(id);
+    }
+    @DeleteMapping()
+    public ResponseResult deleteCategoryById(@PathVariable("id") Long id){
+        return categoryService.deleteCategoryById(id);
     }
 }

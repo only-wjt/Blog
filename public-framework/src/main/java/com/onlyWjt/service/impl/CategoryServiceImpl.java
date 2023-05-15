@@ -1,12 +1,16 @@
 package com.onlyWjt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.onlyWjt.constants.SystemConstants;
+import com.onlyWjt.domain.dto.AddCategoryDto;
+import com.onlyWjt.domain.dto.CategoryDto;
 import com.onlyWjt.domain.entity.Article;
 import com.onlyWjt.domain.entity.Category;
 import com.onlyWjt.domain.entity.ResponseResult;
 import com.onlyWjt.domain.view.CategoryVo;
+import com.onlyWjt.domain.view.PageVo;
 import com.onlyWjt.mapper.CategoryMapper;
 import com.onlyWjt.service.ArticleService;
 import com.onlyWjt.service.CategoryService;
@@ -14,6 +18,7 @@ import com.onlyWjt.utils.BeanCopyUtils;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -59,5 +64,46 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         List<Category> list = list(wrapper);
         //将查询的数据，封装成vo返回出去
         return  BeanCopyUtils.copyBeanList(list, CategoryVo.class);
+    }
+
+    @Override
+    public ResponseResult getCateGoryList(Integer pageNum, Integer pageSize, String name, String status) {
+        LambdaQueryWrapper<Category> categoryWrapper = new LambdaQueryWrapper<>();
+        categoryWrapper.eq(StringUtils.hasText(status), Category::getStatus, status);
+        categoryWrapper.like(StringUtils.hasText(name), Category::getName, name);
+        Page<Category> categoryPage = new Page<>();
+        categoryPage.setCurrent(pageNum);
+        categoryPage.setPages(pageSize);
+        Page<Category> page = page(categoryPage, categoryWrapper);
+        List<CategoryVo> categoryVos = BeanCopyUtils.copyBeanList(page.getRecords(), CategoryVo.class);
+        long total = page.getTotal();
+        PageVo pageVo = new PageVo(categoryVos, total);
+        return ResponseResult.okResult(pageVo);
+    }
+
+    @Override
+    public ResponseResult addCategory(CategoryDto categoryDto) {
+        Category category = BeanCopyUtils.copyBean(categoryDto, Category.class);
+        save(category);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult updateCategory(AddCategoryDto addCategoryDto) {
+        updateById(BeanCopyUtils.copyBean(addCategoryDto, Category.class));
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getCategoryById(Long id) {
+        Category byId = getById(id);
+        CategoryVo categoryVo = BeanCopyUtils.copyBean(byId, CategoryVo.class);
+        return ResponseResult.okResult(categoryVo);
+    }
+
+    @Override
+    public ResponseResult deleteCategoryById(Long id) {
+        removeById(id);
+        return ResponseResult.okResult();
     }
 }

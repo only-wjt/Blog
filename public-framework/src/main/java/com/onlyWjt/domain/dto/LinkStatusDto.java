@@ -1,4 +1,4 @@
-package com.onlyWjt.domain.view;
+package com.onlyWjt.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryVo {
+public class LinkStatusDto {
     private Long id;
-    //分类名
-    private String name;
-
-    //描述
-    private String description;
     private String status;
+
 }
