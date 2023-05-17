@@ -12,6 +12,8 @@
         <module>public-framework</module>
         <module>admin-framework</module>
         <module>blog-framework</module>
+        <module>easyJava-framework</module>
+        <module>easyJavaImpl-framework</module>
     </modules>
 
     <properties>
@@ -19,6 +21,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <mysql.version>8.0.17</mysql.version>
+        <logback.version>1.2.10</logback.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <apache.commons.version>3.4</apache.commons.version>
     </properties>
     <dependencyManagement>
         <dependencies>
